@@ -13,13 +13,29 @@ namespace piqey
 		public int Health
 		{
 			get => _health;
-			set => _health = Mathf.Clamp(value, 0, MaxHealth);
+			set {
+				int newHealth = Mathf.Clamp(value, 0, MaxHealth);
+				bool isNetReduction = newHealth < _health;
+
+				// Only update health if it's not a net reduction (within the cooldown period), else let it pass
+				if (!isNetReduction || !_lastHurt.HasValue || Time.time - _lastHurt.Value >= HurtCooldown)
+				{
+					if (isNetReduction)
+						// Update the last hurt time only when health is actually reduced
+						_lastHurt = Time.time;
+
+					_health = newHealth;
+				}
+			}
 		}
+
+		public float HurtCooldown = 2.0f;
 
 		[Tooltip("The number of units per second this character can travel on each axis.")]
 		public Vector2 Speed = Vector2.one;
 
 		private int _health;
+		private float? _lastHurt = null;
 
 		private Rigidbody2D _body;
 		private Vector2 _input;
@@ -48,7 +64,7 @@ namespace piqey
 		{
 			Renderer renderer = GetComponentInParent<Renderer>();
 			Vector3 labelPos = Camera.main.WorldToScreenPoint(renderer == null ? transform.position : renderer.bounds.center);
-			GUI.Label(new Rect(labelPos.x, Screen.height - labelPos.y, 100, 20), $"{Health:000}/{MaxHealth:000} HP");
+			GUI.Label(new Rect(labelPos.x + 20, Screen.height - labelPos.y, 100, 140), $"{Health:000}/{MaxHealth:000}HP\nHurt: {Time.time - _lastHurt:0.00}s ago");
 		}
 		#endif
 	}
