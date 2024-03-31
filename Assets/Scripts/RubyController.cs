@@ -56,7 +56,6 @@ namespace piqey
 		[Tooltip("The number of units per second this character can travel on each axis.")]
 		public Vector2 Speed = Vector2.one;
 
-
 		//
 		// COMBAT
 		//
@@ -124,6 +123,14 @@ namespace piqey
 
 			if (Input.GetKeyDown(KeyCode.C))
 				Launch();
+			
+			if (Input.GetKeyDown(KeyCode.X))
+			{
+				RaycastHit2D hit2D = Physics2D.Raycast(_body.position + Vector2.up * 0.2f, _lookDir, 1.5f, LayerMask.GetMask("NPC"));
+
+				if (hit2D.collider.TryGetComponent(out NonPlayerCharacter npc))
+					npc.DisplayDialog();
+			}
 		}
 
 		void FixedUpdate()
