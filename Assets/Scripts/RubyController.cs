@@ -8,7 +8,14 @@ namespace piqey
 	[RequireComponent(typeof(Rigidbody2D))]
 	public class RubyController : MonoBehaviour
 	{
+		//
+		// VITALS
+		//
+
+		[Header("Vitals")]
+
 		[Tooltip("The maxium health value this character can have at any time (also spawns with this value).")]
+		[Min(1)]
 		public int MaxHealth = 100;
 		public int Health
 		{
@@ -29,16 +36,42 @@ namespace piqey
 			}
 		}
 
+		[Tooltip("The amount of time in seconds after taking damage before this character can take damage again.")]
+		[Min(0.0f)]
 		public float HurtCooldown = 2.0f;
+
+		//
+		// MOVEMENT
+		//
+
+		[Header("Movement")]
 
 		[Tooltip("The number of units per second this character can travel on each axis.")]
 		public Vector2 Speed = Vector2.one;
 
+		//
+		// HIDDEN
+		//
+
+		[Header("Hidden")]
+
+		[Utilities.Editor.Label("_health")]
+		[SerializeField, Utilities.Editor.ReadOnly]
 		private int _health;
+		[Utilities.Editor.Label("_lastHurt")]
+		[SerializeField, Utilities.Editor.ReadOnly]
 		private float? _lastHurt = null;
 
+		[Utilities.Editor.Label("_body")]
+		[SerializeField, Utilities.Editor.ReadOnly]
 		private Rigidbody2D _body;
+		[Utilities.Editor.Label("_input")]
+		[SerializeField, Utilities.Editor.ReadOnly]
 		private Vector2 _input;
+
+		//
+		// METHODS
+		//
 
 		void Start()
 		{
