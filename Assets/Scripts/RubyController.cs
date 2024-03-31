@@ -55,6 +55,16 @@ namespace piqey
 		[Tooltip("The number of units per second this character can travel on each axis.")]
 		public Vector2 Speed = Vector2.one;
 
+
+		//
+		// COMBAT
+		//
+
+		[Header("Combat")]
+
+		public GameObject ProjectilePrefab;
+		public float ProjectileForce = 300.0f;
+
 		//
 		// HIDDEN
 		//
@@ -109,11 +119,24 @@ namespace piqey
 			_animator.SetFloat("Look Y", _lookDir.y);
 
 			_animator.SetFloat("Speed", _move.magnitude);
+
+			if (Input.GetKeyDown(KeyCode.C))
+				Launch();
 		}
 
 		void FixedUpdate()
 		{
 			_body.MovePosition(_body.position + _move * Time.fixedDeltaTime /* The tutorial tells you to use the wrong one; you'd think Unity themselves would know this! */);
+		}
+
+		void Launch()
+		{
+			GameObject projectileObject = Instantiate(ProjectilePrefab, _body.position + Vector2.up * 0.5f, Quaternion.identity);
+
+			if (projectileObject.TryGetComponent(out Projectile projectile))
+				projectile.Launch(gameObject, _lookDir, ProjectileForce);
+			else
+				throw new MissingComponentException($"Found no {typeof(Projectile)} component on {projectileObject}.");
 		}
 
 		#if UNITY_EDITOR

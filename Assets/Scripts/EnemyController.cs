@@ -21,6 +21,20 @@ namespace piqey
 		[Tooltip("The amount of HP by which this zone should damage the player.")]
 		public int DamageAmount = 10;
 
+		public bool Broken
+		{
+			get => _broken;
+			set {
+				_broken = value;
+				_body.simulated = value;
+
+				if (value)
+					_animator.ResetTrigger("Fixed");
+				else
+					_animator.SetTrigger("Fixed");
+			}
+		}
+
 		//
 		// MOVEMENT
 		//
@@ -45,6 +59,8 @@ namespace piqey
 		private Rigidbody2D _body;
 		[SerializeField, ReadOnly, Label("_animator")]
 		private Animator _animator;
+		[SerializeField, ReadOnly, Label("_broken")]
+		private bool _broken = true;
 
 		//
 		// METHODS
@@ -58,6 +74,9 @@ namespace piqey
 
 		void FixedUpdate()
 		{
+			if (!_broken)
+				return;
+
 			Vector2 dir = MovementPattern[Mathf.FloorToInt(Time.fixedTime / MovementDuration % MovementPattern.Length)] switch
 			{
 				Direction.Left => Vector2.left,
