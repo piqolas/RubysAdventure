@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using piqey.Utilities.Editor;
+using piqey.Utilities.Extensions;
 
 namespace piqey
 {
@@ -67,8 +68,12 @@ namespace piqey
 
 		[SerializeField, ReadOnly, Label("_body")]
 		private Rigidbody2D _body;
-		[SerializeField, ReadOnly, Label("_input")]
-		private Vector2 _input;
+		[SerializeField, ReadOnly, Label("_animator")]
+		private Animator _animator;
+		[SerializeField, ReadOnly, Label("_move")]
+		private Vector2 _move;
+		[SerializeField, ReadOnly, Label("_lookDir")]
+		private Vector2 _lookDir;
 
 		//
 		// EVENTS
@@ -83,20 +88,32 @@ namespace piqey
 		void Start()
 		{
 			Health = MaxHealth;
+
 			_body = GetComponent<Rigidbody2D>();
+			_animator = GetComponent<Animator>();
+
+			OnHurt += () => _animator.SetTrigger("Hit");
 		}
 
 		void Update()
 		{
-			_input = new Vector2(
-					Input.GetAxis("Horizontal"),
-					Input.GetAxis("Vertical")
-			);
+			_move = new Vector2(
+				Input.GetAxis("Horizontal"),
+				Input.GetAxis("Vertical")
+			) * Speed;
+
+			if (_lookDir == Vector2.zero || _move.ApproximatelyOrNot(Vector2.zero))
+				_lookDir = _move.normalized;
+
+			_animator.SetFloat("Look X", _lookDir.x);
+			_animator.SetFloat("Look Y", _lookDir.y);
+
+			_animator.SetFloat("Speed", _move.magnitude);
 		}
 
 		void FixedUpdate()
 		{
-			_body.MovePosition(_body.position + _input * Speed * Time.fixedDeltaTime /* The tutorial tells you to use the wrong one; you'd think Unity themselves would know this! */);
+			_body.MovePosition(_body.position + _move * Time.fixedDeltaTime /* The tutorial tells you to use the wrong one; you'd think Unity themselves would know this! */);
 		}
 
 		#if UNITY_EDITOR
