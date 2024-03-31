@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using piqey.Utilities.Editor;
 
 namespace piqey
@@ -29,8 +30,11 @@ namespace piqey
 				if (!isNetReduction || !_lastHurt.HasValue || Time.time - _lastHurt.Value >= HurtCooldown)
 				{
 					if (isNetReduction)
+					{
 						// Update the last hurt time only when health is actually reduced
 						_lastHurt = Time.time;
+						OnHurt?.Invoke();
+					}
 
 					_health = newHealth;
 				}
@@ -65,6 +69,12 @@ namespace piqey
 		private Rigidbody2D _body;
 		[SerializeField, ReadOnly, Label("_input")]
 		private Vector2 _input;
+
+		//
+		// EVENTS
+		//
+
+		public event UnityAction OnHurt;
 
 		//
 		// METHODS
