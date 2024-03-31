@@ -43,6 +43,8 @@ namespace piqey
 
 		[SerializeField, ReadOnly, Label("_body")]
 		private Rigidbody2D _body;
+		[SerializeField, ReadOnly, Label("_animator")]
+		private Animator _animator;
 
 		//
 		// METHODS
@@ -51,6 +53,7 @@ namespace piqey
 		void Start()
 		{
 			_body = GetComponent<Rigidbody2D>();
+			_animator = GetComponent<Animator>();
 		}
 
 		void FixedUpdate()
@@ -65,6 +68,9 @@ namespace piqey
 			};
 
 			_body.MovePosition(_body.position + dir * Speed * Time.fixedDeltaTime);
+
+			_animator.SetFloat("Move X", dir.x);
+			_animator.SetFloat("Move Y", dir.y);
 		}
 
 		void OnCollisionEnter2D(Collision2D other)
