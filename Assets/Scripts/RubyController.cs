@@ -38,6 +38,7 @@ namespace piqey
 					}
 
 					_health = newHealth;
+					OnHealthChanged?.Invoke();
 				}
 			}
 		}
@@ -89,6 +90,7 @@ namespace piqey
 		// EVENTS
 		//
 
+		public event UnityAction OnHealthChanged;
 		public event UnityAction OnHurt;
 
 		//
