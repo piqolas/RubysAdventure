@@ -128,7 +128,7 @@ namespace piqey
 			{
 				RaycastHit2D hit2D = Physics2D.Raycast(_body.position + Vector2.up * 0.2f, _lookDir, 1.5f, LayerMask.GetMask("NPC"));
 
-				if (hit2D.collider.TryGetComponent(out NonPlayerCharacter npc))
+				if (hit2D.collider != null && hit2D.collider.TryGetComponent(out NonPlayerCharacter npc))
 					npc.DisplayDialog();
 			}
 		}
