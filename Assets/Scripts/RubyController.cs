@@ -1,4 +1,5 @@
 using UnityEngine;
+using piqey.Utilities.Editor;
 
 namespace piqey
 {
@@ -55,18 +56,14 @@ namespace piqey
 
 		[Header("Hidden")]
 
-		[Utilities.Editor.Label("_health")]
-		[SerializeField, Utilities.Editor.ReadOnly]
+		[SerializeField, ReadOnly, Label("_health")]
 		private int _health;
-		[Utilities.Editor.Label("_lastHurt")]
-		[SerializeField, Utilities.Editor.ReadOnly]
+		[SerializeField, ReadOnly, Label("_lastHurt")]
 		private float? _lastHurt = null;
 
-		[Utilities.Editor.Label("_body")]
-		[SerializeField, Utilities.Editor.ReadOnly]
+		[SerializeField, ReadOnly, Label("_body")]
 		private Rigidbody2D _body;
-		[Utilities.Editor.Label("_input")]
-		[SerializeField, Utilities.Editor.ReadOnly]
+		[SerializeField, ReadOnly, Label("_input")]
 		private Vector2 _input;
 
 		//
