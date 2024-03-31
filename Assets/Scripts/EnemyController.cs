@@ -29,9 +29,15 @@ namespace piqey
 				_body.simulated = value;
 
 				if (value)
+				{
 					_animator.ResetTrigger("Fixed");
+					_smoke.Play();
+				}
 				else
+				{
 					_animator.SetTrigger("Fixed");
+					_smoke.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+				}
 			}
 		}
 
@@ -59,6 +65,8 @@ namespace piqey
 		private Rigidbody2D _body;
 		[SerializeField, ReadOnly, Label("_animator")]
 		private Animator _animator;
+		[SerializeField, ReadOnly, Label("_smoke")]
+		private ParticleSystem _smoke;
 		[SerializeField, ReadOnly, Label("_broken")]
 		private bool _broken = true;
 
@@ -70,6 +78,7 @@ namespace piqey
 		{
 			_body = GetComponent<Rigidbody2D>();
 			_animator = GetComponent<Animator>();
+			_smoke = GetComponentInChildren<ParticleSystem>();
 		}
 
 		void FixedUpdate()
