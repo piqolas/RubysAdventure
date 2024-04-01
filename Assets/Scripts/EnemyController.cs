@@ -32,11 +32,14 @@ namespace piqey
 				{
 					_animator.ResetTrigger("Fixed");
 					_smoke.Play();
+					_audioSource.Play();
 				}
 				else
 				{
 					_animator.SetTrigger("Fixed");
 					_smoke.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+					_audioSource.Stop();
+					_audioSource.PlayOneShot(FixSound);
 				}
 			}
 		}
@@ -56,6 +59,14 @@ namespace piqey
 		public Direction[] MovementPattern;
 
 		//
+		// SOUND
+		//
+
+		[Header("Sound")]
+
+		public AudioClip FixSound;
+
+		//
 		// HIDDEN
 		//
 
@@ -67,6 +78,8 @@ namespace piqey
 		private Animator _animator;
 		[SerializeField, ReadOnly, Label("_smoke")]
 		private ParticleSystem _smoke;
+		[SerializeField, ReadOnly, Label("_audioSource")]
+		private AudioSource _audioSource;
 		[SerializeField, ReadOnly, Label("_broken")]
 		private bool _broken = true;
 
@@ -79,6 +92,7 @@ namespace piqey
 			_body = GetComponent<Rigidbody2D>();
 			_animator = GetComponent<Animator>();
 			_smoke = GetComponentInChildren<ParticleSystem>();
+			_audioSource = GetComponent<AudioSource>();
 		}
 
 		void FixedUpdate()

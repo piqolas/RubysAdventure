@@ -66,6 +66,15 @@ namespace piqey
 		public float ProjectileForce = 300.0f;
 
 		//
+		// SOUND
+		//
+
+		[Header("Sound")]
+
+		public AudioClip HurtSound;
+		public AudioClip ThrowCogSound;
+
+		//
 		// HIDDEN
 		//
 
@@ -80,6 +89,9 @@ namespace piqey
 		private Rigidbody2D _body;
 		[SerializeField, ReadOnly, Label("_animator")]
 		private Animator _animator;
+		[SerializeField, ReadOnly, Label("_audioSource")]
+		private AudioSource _audioSource;
+
 		[SerializeField, ReadOnly, Label("_move")]
 		private Vector2 _move;
 		[SerializeField, ReadOnly, Label("_lookDir")]
@@ -102,8 +114,13 @@ namespace piqey
 
 			_body = GetComponent<Rigidbody2D>();
 			_animator = GetComponent<Animator>();
+			_audioSource = GetComponent<AudioSource>();
 
-			OnHurt += () => _animator.SetTrigger("Hit");
+			OnHurt += () =>
+			{
+				_animator.SetTrigger("Hit");
+				_audioSource.PlayOneShot(HurtSound);
+			};
 		}
 
 		void Update()
@@ -143,7 +160,10 @@ namespace piqey
 			GameObject projectileObject = Instantiate(ProjectilePrefab, _body.position + Vector2.up * 0.5f, Quaternion.identity);
 
 			if (projectileObject.TryGetComponent(out Projectile projectile))
+			{
 				projectile.Launch(gameObject, _lookDir, ProjectileForce);
+				_audioSource.PlayOneShot(ThrowCogSound);
+			}
 			else
 				throw new MissingComponentException($"Found no {typeof(Projectile)} component on {projectileObject}.");
 		}
@@ -156,5 +176,8 @@ namespace piqey
 			GUI.Label(new Rect(labelPos.x + 20, Screen.height - labelPos.y, 100, 140), $"{Health:000}/{MaxHealth:000}HP\nHurt: {Time.time - _lastHurt:0.00}s ago");
 		}
 		#endif
+
+		public void PlaySound(AudioClip clip) =>
+			_audioSource.PlayOneShot(clip);
 	}
 }

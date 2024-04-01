@@ -6,6 +6,7 @@ namespace piqey
 	{
 		[Tooltip("The amount of HP by which this collectible should heal the player.")]
 		public int HealingAmount = 15;
+		public AudioClip HealingSound;
 
 		void OnTriggerEnter2D(Collider2D other)
 		{
@@ -16,6 +17,8 @@ namespace piqey
 			if (other.TryGetComponent(out RubyController ruby) && ruby.Health < ruby.MaxHealth) // Also ensure health is not maxed
 			{
 				ruby.Health += HealingAmount;
+				ruby.PlaySound(HealingSound);
+
 				Destroy(gameObject);
 			}
 		}
