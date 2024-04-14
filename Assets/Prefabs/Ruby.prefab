@@ -103,6 +103,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 100
   HurtCooldown: 2
+  HealedParticle: {fileID: 1628648220399426154, guid: 7e103d71b3f550a43a83ae31289d6f76, type: 3}
+  HurtParticle: {fileID: 1628648220399426154, guid: 966d017a1e5e6d14fa582fa80fe1cf24, type: 3}
   Speed: {x: 4, y: 4}
   ProjectilePrefab: {fileID: 449769686942940803, guid: d69f9bb736fa1fa428d28397169461d7, type: 3}
   ProjectileForce: 300

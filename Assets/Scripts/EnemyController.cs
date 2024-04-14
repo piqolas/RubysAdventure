@@ -1,11 +1,9 @@
 using UnityEngine;
+using UnityEngine.Events;
 using piqey.Utilities.Editor;
 
 namespace piqey
 {
-	// I've worked in C# for years; please forgive me for writing my own code.
-	// I didn't do everything the same way but I did it more consisely and more
-	// optimized.
 	[RequireComponent(typeof(Rigidbody2D))]
 	public class EnemyController : MonoBehaviour
 	{
@@ -40,6 +38,9 @@ namespace piqey
 					_smoke.Stop(true, ParticleSystemStopBehavior.StopEmitting);
 					_audioSource.Stop();
 					_audioSource.PlayOneShot(FixSound);
+
+					OnFixed?.Invoke();
+					RubyController.RobotsFixed++;
 				}
 			}
 		}
@@ -82,6 +83,12 @@ namespace piqey
 		private AudioSource _audioSource;
 		[SerializeField, ReadOnly, Label("_broken")]
 		private bool _broken = true;
+
+		//
+		// EVENTS
+		//
+
+		public event UnityAction OnFixed;
 
 		//
 		// METHODS

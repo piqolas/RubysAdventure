@@ -5,12 +5,11 @@ using piqey.Utilities.Extensions;
 
 namespace piqey
 {
-	// I've worked in C# for years; please forgive me for writing my own code.
-	// I didn't do everything the same way but I did it more consisely and more
-	// optimized.
 	[RequireComponent(typeof(Rigidbody2D))]
 	public class RubyController : MonoBehaviour
 	{
+		public static int RobotsFixed = 0;
+
 		//
 		// VITALS
 		//
@@ -24,21 +23,26 @@ namespace piqey
 		{
 			get => _health;
 			set {
-				int newHealth = Mathf.Clamp(value, 0, MaxHealth);
-				bool isNetReduction = newHealth < _health;
-
-				// Only update health if it's not a net reduction (within the cooldown period), else let it pass
-				if (!isNetReduction || !_lastHurt.HasValue || Time.time - _lastHurt.Value >= HurtCooldown)
+				if (_health != value)
 				{
-					if (isNetReduction)
-					{
-						// Update the last hurt time only when health is actually reduced
-						_lastHurt = Time.time;
-						OnHurt?.Invoke();
-					}
+					int newHealth = Mathf.Clamp(value, 0, MaxHealth);
+					bool isNetReduction = newHealth < _health;
 
-					_health = newHealth;
-					OnHealthChanged?.Invoke();
+					// Only update health if it's not a net reduction (within the cooldown period), else let it pass
+					if (!isNetReduction || !_lastHurt.HasValue || Time.time - _lastHurt.Value >= HurtCooldown)
+					{
+						if (isNetReduction)
+						{
+							// Update the last hurt time only when health is actually reduced
+							_lastHurt = Time.time;
+							OnHurt?.Invoke();
+						}
+						else if (newHealth > 0)
+							OnHealed?.Invoke();
+
+						_health = newHealth;
+						OnHealthChanged?.Invoke();
+					}
 				}
 			}
 		}
@@ -46,6 +50,9 @@ namespace piqey
 		[Tooltip("The amount of time in seconds after taking damage before this character can take damage again.")]
 		[Min(0.0f)]
 		public float HurtCooldown = 2.0f;
+
+		public GameObject HealedParticle;
+		public GameObject HurtParticle;
 
 		//
 		// MOVEMENT
@@ -91,6 +98,8 @@ namespace piqey
 		private Animator _animator;
 		[SerializeField, ReadOnly, Label("_audioSource")]
 		private AudioSource _audioSource;
+		[SerializeField, ReadOnly, Label("_renderer")]
+		private Renderer _renderer;
 
 		[SerializeField, ReadOnly, Label("_move")]
 		private Vector2 _move;
@@ -103,6 +112,7 @@ namespace piqey
 
 		public event UnityAction OnHealthChanged;
 		public event UnityAction OnHurt;
+		public event UnityAction OnHealed;
 
 		//
 		// METHODS
@@ -115,11 +125,19 @@ namespace piqey
 			_body = GetComponent<Rigidbody2D>();
 			_animator = GetComponent<Animator>();
 			_audioSource = GetComponent<AudioSource>();
+			_renderer = GetComponent<Renderer>();
 
 			OnHurt += () =>
 			{
 				_animator.SetTrigger("Hit");
 				_audioSource.PlayOneShot(HurtSound);
+
+				Instantiate(HurtParticle, _renderer.bounds.center, Quaternion.identity);
+			};
+
+			OnHealed += () =>
+			{
+				Instantiate(HealedParticle, _renderer.bounds.center, Quaternion.identity);
 			};
 		}
 
