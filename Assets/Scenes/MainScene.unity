@@ -8568,6 +8568,16 @@ PrefabInstance:
       objectReference: {fileID: 786502178}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b079766484aff94c89a83c8e88ab0ae, type: 3}
+--- !u!1 &403523956511907709 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7793100283251344287, guid: 4b079766484aff94c89a83c8e88ab0ae, type: 3}
+  m_PrefabInstance: {fileID: 403523956511907708}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &403523956511907710 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8086808496569048544, guid: 4b079766484aff94c89a83c8e88ab0ae, type: 3}
+  m_PrefabInstance: {fileID: 403523956511907708}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1272535526948143561
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8623,6 +8633,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1272535527038866637, guid: 7f5b360115ee12d47abd3b0406fc3d29, type: 3}
+      propertyPath: WonBox
+      value: 
+      objectReference: {fileID: 403523956511907710}
+    - target: {fileID: 1272535527038866637, guid: 7f5b360115ee12d47abd3b0406fc3d29, type: 3}
+      propertyPath: GameOverBox
+      value: 
+      objectReference: {fileID: 403523956511907709}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f5b360115ee12d47abd3b0406fc3d29, type: 3}
 --- !u!1001 &3332708202455712492

@@ -1,5 +1,7 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using piqey.Utilities.Editor;
 using piqey.Utilities.Extensions;
 
@@ -8,7 +10,19 @@ namespace piqey
 	[RequireComponent(typeof(Rigidbody2D))]
 	public class RubyController : MonoBehaviour
 	{
+		public enum GameState
+		{ Playing, GameOver, Won }
+
+		public static GameState State = GameState.Playing;
 		public static int RobotsFixed = 0;
+
+		private static void ResetGame()
+		{
+			State = GameState.Playing;
+			RobotsFixed = 0;
+
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
 
 		//
 		// VITALS
@@ -53,6 +67,9 @@ namespace piqey
 
 		public GameObject HealedParticle;
 		public GameObject HurtParticle;
+
+		public GameObject GameOverBox;
+		public GameObject WonBox;
 
 		//
 		// MOVEMENT
@@ -143,34 +160,58 @@ namespace piqey
 
 		void Update()
 		{
-			_move = new Vector2(
-				Input.GetAxis("Horizontal"),
-				Input.GetAxis("Vertical")
-			) * Speed;
-
-			if (_lookDir == Vector2.zero || _move.ApproximatelyOrNot(Vector2.zero))
-				_lookDir = _move.normalized;
-
-			_animator.SetFloat("Look X", _lookDir.x);
-			_animator.SetFloat("Look Y", _lookDir.y);
-
-			_animator.SetFloat("Speed", _move.magnitude);
-
-			if (Input.GetKeyDown(KeyCode.C))
-				Launch();
-			
-			if (Input.GetKeyDown(KeyCode.X))
+			if (State == GameState.Playing)
 			{
-				RaycastHit2D hit2D = Physics2D.Raycast(_body.position + Vector2.up * 0.2f, _lookDir, 1.5f, LayerMask.GetMask("NPC"));
+				if (Health <= 0)
+					State = GameState.GameOver;
+				else if (IsAllRobotsFixed())
+					State = GameState.Won;
+				else
+				{
+					_move = new Vector2(
+						Input.GetAxis("Horizontal"),
+						Input.GetAxis("Vertical")
+					) * Speed;
 
-				if (hit2D.collider != null && hit2D.collider.TryGetComponent(out NonPlayerCharacter npc))
-					npc.DisplayDialog();
+					if (_lookDir == Vector2.zero || _move.ApproximatelyOrNot(Vector2.zero))
+						_lookDir = _move.normalized;
+
+					_animator.SetFloat("Look X", _lookDir.x);
+					_animator.SetFloat("Look Y", _lookDir.y);
+
+					_animator.SetFloat("Speed", _move.magnitude);
+
+					if (Input.GetKeyDown(KeyCode.C))
+						Launch();
+
+					if (Input.GetKeyDown(KeyCode.X))
+					{
+						RaycastHit2D hit2D = Physics2D.Raycast(_body.position + Vector2.up * 0.2f, _lookDir, 1.5f, LayerMask.GetMask("NPC"));
+
+						if (hit2D.collider != null && hit2D.collider.TryGetComponent(out NonPlayerCharacter npc))
+							npc.DisplayDialog();
+					}
+				}
+			}
+			else if (State == GameState.GameOver)
+			{
+				if (!GameOverBox.activeSelf)
+					GameOverBox.SetActive(true);
+
+				if (Input.GetKeyDown(KeyCode.R))
+					ResetGame();
+			}
+			else if (State == GameState.Won)
+			{
+				if (!WonBox.activeSelf)
+					WonBox.SetActive(true);
 			}
 		}
 
 		void FixedUpdate()
 		{
-			_body.MovePosition(_body.position + _move * Time.fixedDeltaTime /* The tutorial tells you to use the wrong one; you'd think Unity themselves would know this! */);
+			if (State == GameState.Playing)
+				_body.MovePosition(_body.position + _move * Time.fixedDeltaTime /* The tutorial tells you to use the wrong one; you'd think Unity themselves would know this! */);
 		}
 
 		void Launch()
@@ -189,11 +230,13 @@ namespace piqey
 		#if UNITY_EDITOR
 		void OnGUI()
 		{
-			Renderer renderer = GetComponentInParent<Renderer>();
-			Vector3 labelPos = Camera.main.WorldToScreenPoint(renderer == null ? transform.position : renderer.bounds.center);
+			Vector3 labelPos = Camera.main.WorldToScreenPoint(_renderer.bounds.center);
 			GUI.Label(new Rect(labelPos.x + 20, Screen.height - labelPos.y, 100, 140), $"{Health:000}/{MaxHealth:000}HP\nHurt: {Time.time - _lastHurt:0.00}s ago");
 		}
 		#endif
+
+		private bool IsAllRobotsFixed() =>
+			!FindObjectsOfType<EnemyController>().Any(robot => robot.Broken);
 
 		public void PlaySound(AudioClip clip) =>
 			_audioSource.PlayOneShot(clip);
