@@ -22,7 +22,7 @@ namespace piqey
 			if (DialogAudioSource == null)
 				DialogAudioSource = gameObject.AddComponent<AudioSource>();
 
-			_dialogBucket = new(new List<AudioClip>(DialogSounds));
+			_dialogBucket = new(DialogSounds);
 		}
 
 		void Update()

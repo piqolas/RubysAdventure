@@ -1,18 +1,19 @@
+using System;
 using System.Collections.Generic;
 using piqey.Utilities.Extensions;
-
-using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace piqey.Utilities
 {
 	public class Bucket<T>
 	{
-		private readonly List<T> _source;
+		private readonly T[] _source;
 		private readonly List<T> _reserve = new();
 
-		public Bucket(List<T> source)
+		public Bucket(T[] source)
 		{
 			_source = source;
+			_reserve.Capacity = source.Length;
+
 			Fill();
 		}
 
