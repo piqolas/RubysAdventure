@@ -4,6 +4,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using piqey.Utilities.Editor;
 using piqey.Utilities.Extensions;
+using piqey.Utilities;
 
 namespace piqey
 {
@@ -91,6 +92,9 @@ namespace piqey
 
 		public GameObject ProjectilePrefab;
 		public float ProjectileForce = 300.0f;
+		public AudioClip[] ProjectileImpactSounds;
+		public float ProjectileImpactSoundVolume = 0.6f;
+		public float ProjectileImpactSoundSpatialBlend = 0.65f;
 
 		//
 		// SOUND
@@ -126,6 +130,8 @@ namespace piqey
 		[SerializeField, ReadOnly, Label("_lookDir")]
 		private Vector2 _lookDir;
 
+		private Bucket<AudioClip> _projectileImpactSoundBucket;
+
 		//
 		// EVENTS
 		//
@@ -146,6 +152,8 @@ namespace piqey
 			_animator = GetComponent<Animator>();
 			_audioSource = GetComponent<AudioSource>();
 			_renderer = GetComponent<Renderer>();
+
+			_projectileImpactSoundBucket = new(ProjectileImpactSounds);
 
 			OnHurt += () =>
 			{
@@ -225,6 +233,20 @@ namespace piqey
 			{
 				projectile.Launch(gameObject, _lookDir, ProjectileForce);
 				_audioSource.PlayOneShot(ThrowCogSound);
+
+				projectile.OnCollided += () =>
+				{
+					GameObject soundObj = new();
+					soundObj.transform.position = projectile.transform.position;
+
+					AudioSource source = soundObj.AddComponent<AudioSource>();
+					source.volume = ProjectileImpactSoundVolume;
+					source.spatialBlend = ProjectileImpactSoundSpatialBlend;
+					AudioClip clip = _projectileImpactSoundBucket.Sample();
+					source.PlayOneShot(clip);
+
+					Destroy(soundObj, clip.length);
+				};
 			}
 			else
 				throw new MissingComponentException($"Found no {typeof(Projectile)} component on {projectileObject}.");

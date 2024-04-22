@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using piqey.Utilities.Editor;
 
 namespace piqey
@@ -9,6 +10,8 @@ namespace piqey
 		[Tooltip("Maximum distance from the creator this projectile can travel before being culled.")]
 		[Min(0.0f)]
 		public float DeleteDistance = 100.0f;
+
+		public event UnityAction OnCollided;
 
 		[SerializeField, ReadOnly, Label("_body")]
 		private Rigidbody2D _body;
@@ -28,6 +31,7 @@ namespace piqey
 			if (other.gameObject.TryGetComponent(out EnemyController enemy))
 				enemy.Broken = false;
 
+			OnCollided?.Invoke();
 			Destroy(gameObject);
 		}
 
