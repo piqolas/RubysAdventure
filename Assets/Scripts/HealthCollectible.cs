@@ -1,3 +1,4 @@
+using piqey.Utilities.Editor;
 using UnityEngine;
 
 namespace piqey
@@ -7,6 +8,19 @@ namespace piqey
 		[Tooltip("The amount of HP by which this collectible should heal the player.")]
 		public int HealingAmount = 15;
 		public AudioClip HealingSound;
+
+		[SerializeField, ReadOnly, Label("_renderer")]
+		private SpriteRenderer _renderer;
+
+		void Start()
+		{
+			_renderer = GetComponent<SpriteRenderer>();
+		}
+
+		void Update()
+		{
+			transform.eulerAngles = 7.5f * Mathf.Sin(5.0f * Time.time + GetInstanceID()) * Vector3.forward;
+		}
 
 		void OnTriggerEnter2D(Collider2D other)
 		{

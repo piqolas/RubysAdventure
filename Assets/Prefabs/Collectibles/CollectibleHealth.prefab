@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7468241249646919341}
   - component: {fileID: 6873952832064397054}
   - component: {fileID: 1673559820653580907}
+  - component: {fileID: 558213607152243254}
   m_Layer: 0
   m_Name: CollectibleHealth
   m_TagString: Untagged
@@ -100,6 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HealingAmount: 10
   HealingSound: {fileID: 8300000, guid: af5f8b64e3f58f24c87ff8f789b04f6c, type: 3}
+  _renderer: {fileID: 0}
 --- !u!60 &1673559820653580907
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -165,3 +167,24 @@ PolygonCollider2D:
       - {x: -0.15234375, y: -0.19921875}
       - {x: -0.140625, y: -0.20507812}
       - {x: -0.04296875, y: -0.22070312}
+--- !u!95 &558213607152243254
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4788888344235691493}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4ac5a8bd2b2b95a4a8a17e1a0ff4bd98, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
