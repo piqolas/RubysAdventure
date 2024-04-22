@@ -96,6 +96,22 @@ namespace piqey
 		public float ProjectileImpactSoundVolume = 0.6f;
 		public float ProjectileImpactSoundSpatialBlend = 0.65f;
 
+		public float MagnetismPowerupLength = 10.0f;
+		public bool MagnetismActive
+		{
+			get => _lastMagnetism.HasValue && Time.time - _lastMagnetism.Value <= MagnetismPowerupLength;
+			set {
+				if (value)
+				{
+					_lastMagnetism = Time.time;
+					_renderer.material.color = Color.red;
+				}
+				else
+					_lastMagnetism = null;
+			}
+		}
+		public float MagnetismColorChangeRate = 0.35f;
+
 		//
 		// SOUND
 		//
@@ -115,6 +131,8 @@ namespace piqey
 		private int _health;
 		[SerializeField, ReadOnly, Label("_lastHurt")]
 		private float? _lastHurt = null;
+		[SerializeField, ReadOnly, Label("_lastMagnetism")]
+		private float? _lastMagnetism = null;
 
 		[SerializeField, ReadOnly, Label("_body")]
 		private Rigidbody2D _body;
@@ -202,6 +220,14 @@ namespace piqey
 						if (hit2D.collider != null && hit2D.collider.TryGetComponent(out NonPlayerCharacter npc))
 							npc.DisplayDialog();
 					}
+
+					if (MagnetismActive)
+					{
+						Color.RGBToHSV(_renderer.material.color, out float h, out float s, out float v);
+						_renderer.material.color = Color.HSVToRGB(h + Time.deltaTime * MagnetismColorChangeRate, s, v);
+					}
+					else
+						_renderer.material.color = Color.white;
 				}
 			}
 			else if (State == GameState.GameOver)
@@ -233,6 +259,9 @@ namespace piqey
 			{
 				projectile.Launch(gameObject, _lookDir, ProjectileForce);
 				_audioSource.PlayOneShot(ThrowCogSound);
+
+				if (MagnetismActive)
+					projectile.Magnetic = true;
 
 				projectile.OnCollided += () =>
 				{
