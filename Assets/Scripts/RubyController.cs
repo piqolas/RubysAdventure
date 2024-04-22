@@ -16,6 +16,9 @@ namespace piqey
 		public static GameState State = GameState.Playing;
 		public static int RobotsFixed = 0;
 
+		public static RubyController Get() =>
+			FindFirstObjectByType<RubyController>();
+
 		private static void ResetGame()
 		{
 			State = GameState.Playing;

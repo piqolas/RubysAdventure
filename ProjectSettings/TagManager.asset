@@ -17,8 +17,8 @@ TagManager:
   - Projectile
   - NPC
   - Confiner
-  - 
-  - 
+  - Enemy
+  - EnemyProjectile
   - 
   - 
   - 

@@ -30,14 +30,14 @@ namespace piqey
 				{
 					_animator.ResetTrigger("Fixed");
 					_smoke.Play();
-					_audioSource.Play();
+					AudioPlayer.Play();
 				}
 				else
 				{
 					_animator.SetTrigger("Fixed");
 					_smoke.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-					_audioSource.Stop();
-					_audioSource.PlayOneShot(FixSound);
+					AudioPlayer.Stop();
+					AudioPlayer.PlayOneShot(FixSound);
 
 					OnFixed?.Invoke();
 					RubyController.RobotsFixed++;
@@ -65,6 +65,7 @@ namespace piqey
 
 		[Header("Sound")]
 
+		public AudioSource AudioPlayer;
 		public AudioClip FixSound;
 
 		//
@@ -79,8 +80,6 @@ namespace piqey
 		private Animator _animator;
 		[SerializeField, ReadOnly, Label("_smoke")]
 		private ParticleSystem _smoke;
-		[SerializeField, ReadOnly, Label("_audioSource")]
-		private AudioSource _audioSource;
 		[SerializeField, ReadOnly, Label("_broken")]
 		private bool _broken = true;
 
@@ -96,10 +95,12 @@ namespace piqey
 
 		void Start()
 		{
+			if (AudioPlayer == null)
+				AudioPlayer = GetComponent<AudioSource>();
+
 			_body = GetComponent<Rigidbody2D>();
 			_animator = GetComponent<Animator>();
 			_smoke = GetComponentInChildren<ParticleSystem>();
-			_audioSource = GetComponent<AudioSource>();
 		}
 
 		void FixedUpdate()
